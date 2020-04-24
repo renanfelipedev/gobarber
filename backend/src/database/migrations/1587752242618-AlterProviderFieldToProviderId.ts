@@ -3,7 +3,6 @@ import {
   QueryRunner,
   TableColumn,
   TableForeignKey,
-  Table,
 } from 'typeorm';
 
 export default class AlterProviderFieldToProviderId1587752242618
