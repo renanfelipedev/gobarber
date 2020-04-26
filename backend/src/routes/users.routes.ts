@@ -1,12 +1,22 @@
 import { Router } from 'express';
 
+import CreateUserService from '../services/CreateUsersService';
+
 const usersRouter = Router();
 
-usersRouter.post('/', (request, response) => {
+usersRouter.post('/', async (request, response) => {
   try {
-    const { name, email, password } = request.body;
+    const { name, email, password, passwordConfirmation } = request.body;
+    const createUserService = new CreateUserService();
 
-    return response.json({ name, email, password });
+    const user = await createUserService.execute({
+      name,
+      email,
+      password,
+      passwordConfirmation,
+    });
+
+    return response.json(user);
   } catch (err) {
     return response.status(400).json({ error: err.message });
   }
