@@ -1,4 +1,5 @@
 import { getCustomRepository } from 'typeorm';
+import { hash } from 'bcryptjs';
 
 import User from '../models/User';
 import UsersRepository from '../repositories/UsersRepository';
@@ -33,10 +34,12 @@ class CreateUserService {
       throw new Error("Passwords don't match.");
     }
 
+    const hashedPassword = await hash(password, 8);
+
     const user = userRepository.create({
       name,
       email,
-      password,
+      password: hashedPassword,
     });
 
     await userRepository.save(user);

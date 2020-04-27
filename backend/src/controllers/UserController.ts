@@ -6,14 +6,16 @@ class UserController {
   async store(request: Request, response: Response): Promise<any> {
     try {
       const { name, email, password, passwordConfirmation } = request.body;
-      const createUserService = new CreateUserService();
+      const createUser = new CreateUserService();
 
-      const user = await createUserService.execute({
+      const user = await createUser.execute({
         name,
         email,
         password,
         passwordConfirmation,
       });
+
+      delete user.password;
 
       return response.json(user);
     } catch (err) {
