@@ -2,6 +2,9 @@ import { getCustomRepository } from 'typeorm';
 import { hash } from 'bcryptjs';
 
 import User from '../models/User';
+
+import AppError from '../errors/AppError';
+
 import UsersRepository from '../repositories/UsersRepository';
 
 interface Request {
@@ -23,15 +26,15 @@ class CreateUserService {
     const checkUsersExists = await userRepository.findOne({ where: { email } });
 
     if (checkUsersExists) {
-      throw new Error('User already exists');
+      throw new AppError('User already exists');
     }
 
     if (!passwordConfirmation) {
-      throw new Error('Password confirmation needed.');
+      throw new AppError('Password confirmation needed.');
     }
 
     if (password !== passwordConfirmation) {
-      throw new Error("Passwords don't match.");
+      throw new AppError("Passwords don't match.");
     }
 
     const hashedPassword = await hash(password, 8);

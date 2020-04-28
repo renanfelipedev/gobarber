@@ -4,23 +4,19 @@ import CreateUserService from '../services/CreateUsersService';
 
 class UserController {
   async store(request: Request, response: Response): Promise<any> {
-    try {
-      const { name, email, password, passwordConfirmation } = request.body;
-      const createUser = new CreateUserService();
+    const { name, email, password, passwordConfirmation } = request.body;
+    const createUser = new CreateUserService();
 
-      const user = await createUser.execute({
-        name,
-        email,
-        password,
-        passwordConfirmation,
-      });
+    const user = await createUser.execute({
+      name,
+      email,
+      password,
+      passwordConfirmation,
+    });
 
-      delete user.password;
+    delete user.password;
 
-      return response.json(user);
-    } catch (err) {
-      return response.status(400).json({ error: err.message });
-    }
+    return response.json(user);
   }
 }
 

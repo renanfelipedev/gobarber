@@ -3,6 +3,8 @@ import { Request, Response, NextFunction } from 'express';
 
 import authConfig from '../config/auth';
 
+import AppError from '../errors/AppError';
+
 interface TokenPayload {
   iat: number;
   exp: number;
@@ -17,14 +19,10 @@ export default function ensureAuthenticated(
   const authHeader = request.headers.authorization;
 
   if (!authHeader) {
-    throw new Error('JWT Token is missing.');
+    throw new AppError('JWT Token is missing.', 401);
   }
 
-  const [type, token] = authHeader.split(' ');
-
-  if (!token || !type) {
-    throw new Error('Malformated token.');
-  }
+  const [, token] = authHeader.split(' ');
 
   try {
     const decoded = verify(token, authConfig.jwt.secret);
@@ -35,7 +33,7 @@ export default function ensureAuthenticated(
     };
 
     return next();
-  } catch (err) {
-    throw new Error('Invalid token');
+  } catch {
+    throw new AppError('Invalid JWT token', 401);
   }
 }
