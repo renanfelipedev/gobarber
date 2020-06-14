@@ -104,4 +104,8 @@ dist
 .tern-port
 
 tmp/*
+!tmp/uploads/
 !tmp/.gitkeep
+
+tmp/uploads/*
+!tmp/uploads/.gitkeep
