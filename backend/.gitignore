@@ -109,3 +109,6 @@ tmp/*
 
 tmp/uploads/*
 !tmp/uploads/.gitkeep
+
+*.md
+!README.md
