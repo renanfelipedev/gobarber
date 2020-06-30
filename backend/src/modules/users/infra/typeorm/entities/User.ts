@@ -17,7 +17,7 @@ class User {
   @Column()
   email: string;
 
-  @Column()
+  @Column({ nullable: true, default: null })
   avatar: string;
 
   @Column()
