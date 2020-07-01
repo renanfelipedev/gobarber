@@ -8,22 +8,25 @@ import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepo
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 import FakeStorageProvider from '@shared/container/providers/StorageProvider/fakes/FakeStorageProvider';
 
+let fakeHashProvider: FakeHashProvider;
+let fakeUserRepository: FakeUsersRepository;
+let fakeStorageProvider: FakeStorageProvider;
+let createUser: CreateUsersService;
+let updateAvatar: UpdateUserAvatarService;
+
 describe('UpdateUserAvatarService', () => {
-  it('shoud be able to update user avatar image', async () => {
-    const fakeHashProvider = new FakeHashProvider();
-    const fakeUserRepository = new FakeUsersRepository();
-    const fakeStorageProvider = new FakeStorageProvider();
-
-    const createUser = new CreateUsersService(
-      fakeUserRepository,
-      fakeHashProvider,
-    );
-
-    const updateAvatar = new UpdateUserAvatarService(
+  beforeEach(() => {
+    fakeHashProvider = new FakeHashProvider();
+    fakeUserRepository = new FakeUsersRepository();
+    fakeStorageProvider = new FakeStorageProvider();
+    createUser = new CreateUsersService(fakeUserRepository, fakeHashProvider);
+    updateAvatar = new UpdateUserAvatarService(
       fakeUserRepository,
       fakeStorageProvider,
     );
+  });
 
+  it('shoud be able to update user avatar image', async () => {
     const user = await createUser.execute({
       name: 'New user',
       email: 'new.user@email.com',
@@ -40,21 +43,7 @@ describe('UpdateUserAvatarService', () => {
   });
 
   it('should delete old avatar when updating to a new one', async () => {
-    const fakeHashProvider = new FakeHashProvider();
-    const fakeUserRepository = new FakeUsersRepository();
-    const fakeStorageProvider = new FakeStorageProvider();
-
     const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
-
-    const createUser = new CreateUsersService(
-      fakeUserRepository,
-      fakeHashProvider,
-    );
-
-    const updateAvatar = new UpdateUserAvatarService(
-      fakeUserRepository,
-      fakeStorageProvider,
-    );
 
     const user = await createUser.execute({
       name: 'New user',
@@ -78,14 +67,6 @@ describe('UpdateUserAvatarService', () => {
   });
 
   it('should not be able to update avatar from a non existing user', async () => {
-    const fakeUserRepository = new FakeUsersRepository();
-    const fakeStorageProvider = new FakeStorageProvider();
-
-    const updateAvatar = new UpdateUserAvatarService(
-      fakeUserRepository,
-      fakeStorageProvider,
-    );
-
     await expect(
       updateAvatar.execute({
         user_id: '1',

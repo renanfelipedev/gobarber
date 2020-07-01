@@ -6,15 +6,18 @@ import CreateUsersService from '@modules/users/services/CreateUsersService';
 import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepository';
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 
-describe('CreateUsersService', () => {
-  it('shoud be able to create a new user', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-    const createUser = new CreateUsersService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
+let fakeUsersRepository: FakeUsersRepository;
+let fakeHashProvider: FakeHashProvider;
+let createUser: CreateUsersService;
 
+describe('CreateUsersService', () => {
+  beforeEach(() => {
+    fakeUsersRepository = new FakeUsersRepository();
+    fakeHashProvider = new FakeHashProvider();
+    createUser = new CreateUsersService(fakeUsersRepository, fakeHashProvider);
+  });
+
+  it('shoud be able to create a new user', async () => {
     const newUser = await createUser.execute({
       name: 'New user',
       email: 'new.user@email.com',
@@ -26,13 +29,6 @@ describe('CreateUsersService', () => {
   });
 
   it('shoul not be able to create a new user with same e-mail from another', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-    const createUser = new CreateUsersService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
     await createUser.execute({
       name: 'New user',
       email: 'new.user@email.com',
@@ -51,13 +47,6 @@ describe('CreateUsersService', () => {
   });
 
   it('should not be able to create users without password confirmation', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-    const createUser = new CreateUsersService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
     await expect(
       createUser.execute({
         name: 'New user',
@@ -69,13 +58,6 @@ describe('CreateUsersService', () => {
   });
 
   it('should not be able to create users that passwords dont match', async () => {
-    const fakeUsersRepository = new FakeUsersRepository();
-    const fakeHashProvider = new FakeHashProvider();
-    const createUser = new CreateUsersService(
-      fakeUsersRepository,
-      fakeHashProvider,
-    );
-
     await expect(
       createUser.execute({
         name: 'New user',
