@@ -20,7 +20,7 @@ class User {
   @Column({ nullable: true, default: null })
   avatar: string;
 
-  @Column()
+  @Column({ select: false })
   password: string;
 
   @CreateDateColumn()

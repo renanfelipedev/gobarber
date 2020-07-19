@@ -87,8 +87,9 @@ describe('UpdateProfileService', () => {
       user_id: user.id,
       name: 'Changed User Name',
       email: 'changed.user.mail@email.com',
-      oldPassword: '123123',
+      old_password: '123123',
       password: '321321',
+      passwordConfirmation: '321321',
     });
 
     expect(updatedUser.password).toBe('321321');
@@ -108,6 +109,7 @@ describe('UpdateProfileService', () => {
         name: 'Changed User Name',
         email: 'changed.user.mail@email.com',
         password: '321321',
+        passwordConfirmation: '321321',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -125,8 +127,29 @@ describe('UpdateProfileService', () => {
         user_id: user.id,
         name: 'Changed User Name',
         email: 'changed.user.mail@email.com',
-        oldPassword: '111222',
+        old_password: '111222',
         password: '321321',
+        passwordConfirmation: '321321',
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('shoud not be able to update user password with a wrong password confirmation', async () => {
+    const user = await createUser.execute({
+      name: 'New user',
+      email: 'new.user@email.com',
+      password: '123123',
+      passwordConfirmation: '123123',
+    });
+
+    await expect(
+      updateProfile.execute({
+        user_id: user.id,
+        name: 'Changed User Name',
+        email: 'changed.user.mail@email.com',
+        old_password: '123123',
+        password: '321321',
+        passwordConfirmation: '321123',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });

@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import CreateUserService from '@modules/users/services/CreateUsersService';
 
 class UserController {
-  async store(request: Request, response: Response): Promise<any> {
+  async store(request: Request, response: Response): Promise<Response> {
     const { name, email, password, passwordConfirmation } = request.body;
 
     const createUser = container.resolve(CreateUserService);
