@@ -23,6 +23,7 @@ class AppointmentsRepository implements IAppointmentRepository {
   }
 
   public async create({
+    user_id,
     provider_id,
     date,
   }: ICreateAppointmentsDTO): Promise<Appointment> {
