@@ -1,7 +1,10 @@
-import { getRepository, Repository } from 'typeorm';
+import { getRepository, Repository, Raw } from 'typeorm';
+
+import ICreateAppointmentsDTO from '@modules/appointments/dtos/ICreateAppointmentsDTO';
+import IFindAllAppointmentsFromProviderDTO from '@modules/appointments/dtos/IFindAllAppointmentsInMonthFromProviderDTO';
+import IFindAllAppointmentsInDayFromProviderDTO from '@modules/appointments/dtos/IFindAllAppointmentsInDayFromProviderDTO';
 
 import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
-import ICreateAppointmentsDTO from '@modules/appointments/dtos/ICreateAppointmentsDTO';
 import IAppointmentRepository from '@modules/appointments/repositories/IAppointmentsRepository';
 
 class AppointmentsRepository implements IAppointmentRepository {
@@ -35,6 +38,48 @@ class AppointmentsRepository implements IAppointmentRepository {
 
   public async find(): Promise<Appointment[]> {
     return this.ormRepository.find();
+  }
+
+  public async findAllInMonthFromProvider({
+    month,
+    year,
+    provider_id,
+  }: IFindAllAppointmentsFromProviderDTO): Promise<Appointment[]> {
+    const parsedMonth = String(month).padStart(2, '0');
+
+    const foundAppointments = await this.ormRepository.find({
+      where: {
+        provider_id,
+        date: Raw(
+          dateFieldName =>
+            `to_char(${dateFieldName}, 'MM-YYYY') = '${parsedMonth}-${year}'`,
+        ),
+      },
+    });
+
+    return foundAppointments;
+  }
+
+  public async findAllInDayFromProvider({
+    provider_id,
+    day,
+    month,
+    year,
+  }: IFindAllAppointmentsInDayFromProviderDTO): Promise<Appointment[]> {
+    const parsedMonth = String(month).padStart(2, '0');
+    const parsedDay = String(day).padStart(2, '0');
+
+    const foundAppointments = await this.ormRepository.find({
+      where: {
+        provider_id,
+        date: Raw(
+          dateFieldName =>
+            `to_char(${dateFieldName}, 'DD-MM-YYYY') = '${parsedDay}-${parsedMonth}-${year}'`,
+        ),
+      },
+    });
+
+    return foundAppointments;
   }
 }
 
