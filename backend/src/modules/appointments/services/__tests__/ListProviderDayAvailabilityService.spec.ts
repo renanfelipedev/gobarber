@@ -13,89 +13,47 @@ describe('ListProviderDayAvailability', () => {
   });
 
   it('it should be able to list the day availability from provider', async () => {
-    await fakeAppointmentsRepository.create({
-      provider_id: 'user',
-      date: new Date(2020, 7, 10, 8, 0, 0),
-    });
+    const day = 9;
+    const month = 12;
+    const year = 2020;
 
     await fakeAppointmentsRepository.create({
       provider_id: 'user',
-      date: new Date(2020, 7, 10, 10, 0, 0),
+      date: new Date(year, month - 1, day, 16, 0, 0),
     });
 
-    await fakeAppointmentsRepository.create({
-      provider_id: 'user',
-      date: new Date(2020, 7, 10, 11, 0, 0),
+    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
+      const customDate = new Date(year, month - 1, day, 13, 0, 0);
+      return customDate.getTime();
     });
 
     const availability = await listProviderDayAvailability.execute({
       provider_id: 'user',
-      day: 10,
-      month: 8,
-      year: 2020,
+      day,
+      month,
+      year,
     });
 
     expect(availability).toEqual(
       expect.arrayContaining([
         {
-          hour: 8,
+          hour: 12,
           available: false,
         },
         {
-          hour: 9,
+          hour: 13,
+          available: false,
+        },
+        {
+          hour: 14,
           available: true,
         },
         {
-          hour: 10,
-          available: false,
-        },
-        {
-          hour: 10,
-          available: false,
-        },
-      ]),
-    );
-  });
-
-  it('it should not be able to list the day availability from provider', async () => {
-    await fakeAppointmentsRepository.create({
-      provider_id: 'user',
-      date: new Date(2020, 7, 10, 8, 0, 0),
-    });
-
-    await fakeAppointmentsRepository.create({
-      provider_id: 'user',
-      date: new Date(2020, 7, 10, 10, 0, 0),
-    });
-
-    await fakeAppointmentsRepository.create({
-      provider_id: 'user',
-      date: new Date(2020, 7, 10, 11, 0, 0),
-    });
-
-    const availability = await listProviderDayAvailability.execute({
-      provider_id: 'user',
-      day: 10,
-      month: 8,
-      year: 2020,
-    });
-
-    expect(availability).toEqual(
-      expect.arrayContaining([
-        {
-          hour: 8,
-          available: false,
-        },
-        {
-          hour: 9,
+          hour: 15,
           available: true,
         },
         {
-          hour: 10,
-          available: false,
-        },
-        {
-          hour: 10,
+          hour: 16,
           available: false,
         },
       ]),

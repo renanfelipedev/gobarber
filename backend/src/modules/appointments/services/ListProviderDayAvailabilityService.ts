@@ -39,17 +39,18 @@ class ListProviderDayAvailability {
       (_, index) => index + hourStart,
     );
 
+    const currentDate = new Date(Date.now());
+
     const availability = eachHourArray.map(hour => {
       const hasAppointmentInHour = appointments.find(
         appointment => getHours(appointment.date) === hour,
       );
 
-      const currentDate = new Date(Date.now());
-      const compareDate = new Date(year, month - 1, day, hour);
+      const compareDate = new Date(year, month - 1, day, hour, 0, 0);
 
       return {
         hour,
-        available: !hasAppointmentInHour && isAfter(currentDate, compareDate),
+        available: !hasAppointmentInHour && isAfter(compareDate, currentDate),
       };
     });
 
