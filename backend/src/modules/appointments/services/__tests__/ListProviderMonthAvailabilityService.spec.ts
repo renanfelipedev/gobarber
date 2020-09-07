@@ -13,17 +13,28 @@ describe('ListProviderMonthAvailabilityService', () => {
   });
 
   it('it should be able to list the month availability from provider', async () => {
-    for (let i = 1; i <= 18; i += 1) {
+    const month = 12;
+    const year = 2020;
+    const day = 11;
+
+    const START_HOUR = 8;
+    const END_HOUR = 18;
+
+    for (
+      let hourly_schedule = START_HOUR;
+      hourly_schedule <= END_HOUR;
+      hourly_schedule += 1
+    ) {
       fakeAppointmentsRepository.create({
         provider_id: 'user',
-        date: new Date(2020, 7, 10, i, 0, 0),
+        date: new Date(year, month - 1, day, hourly_schedule, 0, 0),
       });
     }
 
     const availability = await listProviderMonthAvailability.execute({
       provider_id: 'user',
-      month: 8,
-      year: 2020,
+      month,
+      year,
     });
 
     expect(availability).toEqual(
@@ -33,7 +44,7 @@ describe('ListProviderMonthAvailabilityService', () => {
           available: true,
         },
         {
-          day: 10,
+          day: 11,
           available: false,
         },
         {
