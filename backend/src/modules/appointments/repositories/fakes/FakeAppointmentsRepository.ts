@@ -30,6 +30,7 @@ class AppointmentsRepository implements IAppointmentRepository {
       id: uuid(),
       date,
       provider_id,
+      user_id,
     });
 
     this.appointments.push(appointment);

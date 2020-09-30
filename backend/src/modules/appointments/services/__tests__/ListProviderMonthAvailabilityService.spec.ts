@@ -26,13 +26,14 @@ describe('ListProviderMonthAvailabilityService', () => {
       hourly_schedule += 1
     ) {
       fakeAppointmentsRepository.create({
-        provider_id: 'user',
+        provider_id: 'provider',
+        user_id: 'user',
         date: new Date(year, month - 1, day, hourly_schedule, 0, 0),
       });
     }
 
     const availability = await listProviderMonthAvailability.execute({
-      provider_id: 'user',
+      provider_id: 'provider',
       month,
       year,
     });
